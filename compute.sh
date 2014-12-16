@@ -217,12 +217,12 @@ ec2_private_dns_show_ip=True
 
 # Network settings
 network_api_class=nova.network.neutronv2.api.API
-neutron_url=http://${CONTROLLER_HOST}:9696
+neutron_url=https://${CONTROLLER_HOST}:9696
 neutron_auth_strategy=keystone
 neutron_admin_tenant_name=service
 neutron_admin_username=neutron
 neutron_admin_password=neutron
-neutron_admin_auth_url=http://${CONTROLLER_HOST}:5000/v2.0
+neutron_admin_auth_url=https://${CONTROLLER_HOST}:5000/v2.0
 libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
 linuxnet_interface_driver=nova.network.linux_net.LinuxOVSInterfaceDriver
 #firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
@@ -253,17 +253,17 @@ scheduler_default_filters=AllHostsFilter
 
 # Auth
 auth_strategy=keystone
-keystone_ec2_url=http://${KEYSTONE_ENDPOINT}:5000/v2.0/ec2tokens
+keystone_ec2_url=https://${KEYSTONE_ENDPOINT}:5000/v2.0/ec2tokens
 
 # NoVNC
 novnc_enabled=true
 novncproxy_host=${MY_IP}
-novncproxy_base_url=http://${MY_IP}:6080/vnc_auto.html
+novncproxy_base_url=https://${MY_IP}:6080/vnc_auto.html
 novncproxy_port=6080
 
 xvpvncproxy_port=6081
 xvpvncproxy_host=${MY_IP}
-xvpvncproxy_base_url=http://${MY_IP}:6081/console
+xvpvncproxy_base_url=https://${MY_IP}:6081/console
 
 vncserver_proxyclient_address=${MY_IP}
 vncserver_listen=0.0.0.0
@@ -275,7 +275,7 @@ service_port = 5000
 auth_host = ${CONTROLLER_HOST}
 auth_port = 35357
 auth_protocol = http
-auth_uri = http://${CONTROLLER_HOST}:5000/
+auth_uri = https://${CONTROLLER_HOST}:5000/
 admin_tenant_name = ${SERVICE_TENANT}
 admin_user = ${NOVA_SERVICE_USER}
 admin_password = ${NOVA_SERVICE_PASS}

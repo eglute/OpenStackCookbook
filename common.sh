@@ -26,7 +26,7 @@ export SERVICE_TENANT_NAME=service
 export SERVICE_PASS=openstack
 export ENDPOINT=${KEYSTONE_ENDPOINT}
 export SERVICE_TOKEN=ADMIN
-export SERVICE_ENDPOINT=http://${ENDPOINT}:35357/v2.0
+export SERVICE_ENDPOINT=https://${ENDPOINT}:35357/v2.0
 export MONGO_KEY=MongoFoo
 
 sudo apt-get install -y software-properties-common ubuntu-cloud-keyring

@@ -80,14 +80,29 @@ sudo echo "syslog_log_facility = LOG_LOCAL0" >> ${KEYSTONE_CONF}
 
 sudo apt-get -y install python-keystoneclient
 keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+keystone-manage pki_setup --keystone-user keystone --keystone-group keystone
 
 sudo echo "
+[signing]
+
+certfile=/etc/keystone/ssl/certs/signing_cert.pem
+keyfile=/etc/keystone/ssl/private/signing_key.pem
+ca_certs=/etc/keystone/ssl/certs/ca.pem
+ca_key=/etc/keystone/ssl/private/cakey.pem
+key_size=2048
+valid_days=3650
+cert_subject=/C=US/ST=Unset/L=Unset/O=Unset/CN=172.16.0.200
+
 [ssl]
-enable = True
-certfile = /etc/keystone/ssl/certs/keystone.pem
-keyfile = /etc/keystone/ssl/private/keystonekey.pem
-ca_certs = /etc/keystone/ssl/certs/ca.pem
-ca_key = /etc/keystone/ssl/certs/cakey.pem" >> ${KEYSTONE_CONF}
+
+enable=true
+certfile=/etc/keystone/ssl/certs/signing_cert.pem
+keyfile=/etc/keystone/ssl/private/signing_key.pem
+ca_certs=/etc/keystone/ssl/certs/ca.pem
+ca_key=/etc/keystone/ssl/private/cakey.pem
+key_size=2048
+valid_days=3650
+cert_subject=/C=US/ST=Unset/L=Unset/O=Unset/CN=172.16.0.200" >> ${KEYSTONE_CONF} 
 
 # This runs for both LDAP and non-LDAP configs
 create_endpoints(){
@@ -330,7 +345,7 @@ Whoever is doing glance needs to remove this
 section and the exit command, otherwise 
 things will be superbroke.
 "
-exit
+# exit
 
 ######################
 # Chapter 2 GLANCE   #
@@ -412,7 +427,7 @@ sudo glance-manage db_sync
 export OS_TENANT_NAME=cookbook
 export OS_USERNAME=admin
 export OS_PASSWORD=openstack
-export OS_AUTH_URL=http://${MY_IP}:5000/v2.0/
+export OS_AUTH_URL=https://${MY_IP}:5000/v2.0/
 export OS_NO_CACHE=1
 
 #sudo apt-get -y install wget
@@ -454,8 +469,8 @@ mysql -uroot -p$MYSQL_ROOT_PASS -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutro
 mysql -uroot -p$MYSQL_ROOT_PASS -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY '$MYSQL_NEUTRON_PASS';"
 
 # List the new user and role assigment
-keystone user-list --tenant-id $SERVICE_TENANT_ID
-keystone user-role-list --tenant-id $SERVICE_TENANT_ID --user-id $NEUTRON_USER_ID
+keystone --insecure user-list --tenant-id $SERVICE_TENANT_ID
+keystone --insecure user-role-list --tenant-id $SERVICE_TENANT_ID --user-id $NEUTRON_USER_ID
 
 sudo apt-get -y install neutron-server neutron-plugin-ml2
 
@@ -500,12 +515,12 @@ notification_driver = neutron.openstack.common.notifier.rpc_notifier
 # ======== neutron nova interactions ==========
 notify_nova_on_port_status_changes = True
 notify_nova_on_port_data_changes = True
-nova_url = http://${CONTROLLER_HOST}:8774/v2
+nova_url = https://${CONTROLLER_HOST}:8774/v2
 nova_region_name = RegionOne
 nova_admin_username = ${NOVA_SERVICE_USER}
 nova_admin_tenant_id = ${SERVICE_TENANT_ID}
 nova_admin_password = ${NOVA_SERVICE_PASS}
-nova_admin_auth_url = http://${CONTROLLER_HOST}:35357/v2.0
+nova_admin_auth_url = https://${CONTROLLER_HOST}:35357/v2.0
 
 [quotas]
 # quota_driver = neutron.db.quota_db.DbQuotaDriver
@@ -638,12 +653,12 @@ ec2_private_dns_show_ip=True
 
 # Network settings
 network_api_class=nova.network.neutronv2.api.API
-neutron_url=http://${MY_IP}:9696
+neutron_url=https://${MY_IP}:9696
 neutron_auth_strategy=keystone
 neutron_admin_tenant_name=service
 neutron_admin_username=neutron
 neutron_admin_password=neutron
-neutron_admin_auth_url=http://${MY_IP}:5000/v2.0
+neutron_admin_auth_url=https://${MY_IP}:5000/v2.0
 libvirt_vif_driver=nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver
 linuxnet_interface_driver=nova.network.linux_net.LinuxOVSInterfaceDriver
 #firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
@@ -674,29 +689,29 @@ scheduler_default_filters=AllHostsFilter
 
 # Auth
 auth_strategy=keystone
-keystone_ec2_url=http://${KEYSTONE_ENDPOINT}:5000/v2.0/ec2tokens
+keystone_ec2_url=https://${KEYSTONE_ENDPOINT}:5000/v2.0/ec2tokens
 
 # NoVNC
 novnc_enabled=true
 novncproxy_host=${MY_IP}
-novncproxy_base_url=http://${MY_IP}:6080/vnc_auto.html
+novncproxy_base_url=https://${MY_IP}:6080/vnc_auto.html
 novncproxy_port=6080
 
 xvpvncproxy_port=6081
 xvpvncproxy_host=${MY_IP}
-xvpvncproxy_base_url=http://${MY_IP}:6081/console
+xvpvncproxy_base_url=https://${MY_IP}:6081/console
 
 vncserver_proxyclient_address=${MY_IP}
 vncserver_listen=0.0.0.0
 
 [keystone_authtoken]
-service_protocol = http
+service_protocol = https
 service_host = ${MY_IP}
 service_port = 5000
 auth_host = ${MY_IP}
 auth_port = 35357
-auth_protocol = http
-auth_uri = http://${MY_IP}:35357/
+auth_protocol = https
+auth_uri = https://${MY_IP}:35357/
 admin_tenant_name = ${SERVICE_TENANT}
 admin_user = ${NOVA_SERVICE_USER}
 admin_password = ${NOVA_SERVICE_PASS}
@@ -778,7 +793,7 @@ cat > /vagrant/openrc <<EOF
 export OS_TENANT_NAME=cookbook
 export OS_USERNAME=admin
 export OS_PASSWORD=openstack
-export OS_AUTH_URL=http://${MY_IP}:5000/v2.0/
+export OS_AUTH_URL=https://${MY_IP}:5000/v2.0/
 EOF
 
 # Hack: restart neutron again...

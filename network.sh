@@ -135,7 +135,7 @@ EOF
 
 cat > ${NEUTRON_METADATA_AGENT_INI} << EOF
 [DEFAULT]
-auth_url = http://${CONTROLLER_HOST}:5000/v2.0
+auth_url = https://${CONTROLLER_HOST}:5000/v2.0
 auth_region = regionOne
 admin_tenant_name = service
 admin_user = ${NEUTRON_SERVICE_USER}

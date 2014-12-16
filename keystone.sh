@@ -41,7 +41,7 @@ sudo apt-get -y install python-keystoneclient
 
 export ENDPOINT=127.0.0.1
 export OS_SERVICE_TOKEN=ADMIN
-export OS_SERVICE_ENDPOINT=http://${ENDPOINT}:35357/v2.0
+export OS_SERVICE_ENDPOINT=https://${ENDPOINT}:35357/v2.0
 
 # admin role
 keystone role-create --name admin
@@ -95,7 +95,7 @@ keystone service-create --name volume --type volume --description 'Volume Servic
 # OpenStack Compute Nova API
 NOVA_SERVICE_ID=$(keystone service-list | awk '/\ nova\ / {print $2}')
 
-PUBLIC="http://$ENDPOINT:8774/v2/\$(tenant_id)s"
+PUBLIC="https://$ENDPOINT:8774/v2/\$(tenant_id)s"
 ADMIN=$PUBLIC
 INTERNAL=$PUBLIC
 
@@ -104,8 +104,8 @@ keystone endpoint-create --region regionOne --service_id $NOVA_SERVICE_ID --publ
 # OpenStack Compute EC2 API
 EC2_SERVICE_ID=$(keystone service-list | awk '/\ ec2\ / {print $2}')
 
-PUBLIC="http://$ENDPOINT:8773/services/Cloud"
-ADMIN="http://$ENDPOINT:8773/services/Admin"
+PUBLIC="https://$ENDPOINT:8773/services/Cloud"
+ADMIN="https://$ENDPOINT:8773/services/Admin"
 INTERNAL=$PUBLIC
 
 keystone endpoint-create --region regionOne --service_id $EC2_SERVICE_ID --publicurl $PUBLIC --adminurl $ADMIN --internalurl $INTERNAL
@@ -113,7 +113,7 @@ keystone endpoint-create --region regionOne --service_id $EC2_SERVICE_ID --publi
 # Glance Image Service
 GLANCE_SERVICE_ID=$(keystone service-list | awk '/\ glance\ / {print $2}')
 
-PUBLIC="http://$ENDPOINT:9292/v1"
+PUBLIC="https://$ENDPOINT:9292/v1"
 ADMIN=$PUBLIC
 INTERNAL=$PUBLIC
 
@@ -122,8 +122,8 @@ keystone endpoint-create --region regionOne --service_id $GLANCE_SERVICE_ID --pu
 # Keystone OpenStack Identity Service
 KEYSTONE_SERVICE_ID=$(keystone service-list | awk '/\ keystone\ / {print $2}')
 
-PUBLIC="http://$ENDPOINT:5000/v2.0"
-ADMIN="http://$ENDPOINT:35357/v2.0"
+PUBLIC="https://$ENDPOINT:5000/v2.0"
+ADMIN="https://$ENDPOINT:35357/v2.0"
 INTERNAL=$PUBLIC
 
 keystone endpoint-create --region regionOne --service_id $KEYSTONE_SERVICE_ID --publicurl $PUBLIC --adminurl $ADMIN --internalurl $INTERNAL
@@ -131,7 +131,7 @@ keystone endpoint-create --region regionOne --service_id $KEYSTONE_SERVICE_ID --
 # Cinder Block Storage Service
 CINDER_SERVICE_ID=$(keystone service-list | awk '/\ volume\ / {print $2}')
 
-PUBLIC="http://$ENDPOINT:8776/v1/%(tenant_id)s"
+PUBLIC="https://$ENDPOINT:8776/v1/%(tenant_id)s"
 ADMIN=$PUBLIC
 INTERNAL=$PUBLIC
 

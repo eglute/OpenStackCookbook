@@ -181,11 +181,11 @@ set log_name = cache
 
 [filter:authtoken]
 paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
-auth_protocol = http
+auth_protocol = https
 auth_host = $KEYSTONE_ENDPOINT
 auth_port = 35357
 auth_token = admin
-service_protocol = http
+service_protocol = https
 service_host = $KEYSTONE_ENDPOINT
 service_port = 5000
 admin_token = admin
@@ -308,50 +308,50 @@ sudo /usr/local/bin/remakerings.sh
 
 export ENDPOINT=172.16.0.200
 export SERVICE_TOKEN=ADMIN
-export SERVICE_ENDPOINT=http://${ENDPOINT}:35357/v2.0
+export SERVICE_ENDPOINT=https://${ENDPOINT}:35357/v2.0
 
 # Swift Proxy Address
 export SWIFT_PROXY_SERVER=$MY_IP
 
 # Configure the OpenStack Storage Endpoint
-keystone --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name swift --type object-store --description 'OpenStack Storage Service'
+keystone --insecure --token $SERVICE_TOKEN --endpoint $SERVICE_ENDPOINT service-create --name swift --type object-store --description 'OpenStack Storage Service'
 
 # Service Endpoint URLs
-ID=$(keystone service-list | awk '/\ swift\ / {print $2}')
+ID=$(keystone --insecure service-list | awk '/\ swift\ / {print $2}')
 
-PUBLIC_URL="http://$SWIFT_PROXY_SERVER:8080/v1/AUTH_\$(tenant_id)s"
-ADMIN_URL="http://$SWIFT_PROXY_SERVER:8080/v1/"
-INTERNAL_URL="http://$SWIFT_PROXY_SERVER:8080/v1/AUTH_\$(tenant_id)s"
+PUBLIC_URL="https://$SWIFT_PROXY_SERVER:8080/v1/AUTH_\$(tenant_id)s"
+ADMIN_URL="https://$SWIFT_PROXY_SERVER:8080/v1/"
+INTERNAL_URL="https://$SWIFT_PROXY_SERVER:8080/v1/AUTH_\$(tenant_id)s"
 
-keystone endpoint-create --region regionOne --service_id $ID --publicurl $PUBLIC_URL --adminurl $ADMIN_URL --internalurl $INTERNAL_URL
+keystone --insecure endpoint-create --region RegionOne --service_id $ID --publicurl $PUBLIC_URL --adminurl $ADMIN_URL --internalurl $INTERNAL_URL
 
 # Get the service tenant ID
-SERVICE_TENANT_ID=$(keystone tenant-list | awk '/\ service\ / {print $2}')
+SERVICE_TENANT_ID=$(keystone --insecure tenant-list | awk '/\ service\ / {print $2}')
 
 # Create the swift user
-keystone user-create --name swift --pass swift --tenant_id $SERVICE_TENANT_ID --email swift@localhost --enabled true
+keystone --insecure user-create --name swift --pass swift --tenant_id $SERVICE_TENANT_ID --email swift@localhost --enabled true
 
 # Get the swift user id
-USER_ID=$(keystone user-list | awk '/\ swift\ / {print $2}')
+USER_ID=$(keystone --insecure user-list | awk '/\ swift\ / {print $2}')
 
 # Get the admin role id
-ROLE_ID=$(keystone role-list | awk '/\ admin\ / {print $2}')
+ROLE_ID=$(keystone --insecure role-list | awk '/\ admin\ / {print $2}')
 
 # Assign the swift user admin role in service tenant
-keystone user-role-add --user $USER_ID --role $ROLE_ID --tenant_id $SERVICE_TENANT_ID
+keystone --insecure user-role-add --user $USER_ID --role $ROLE_ID --tenant_id $SERVICE_TENANT_ID
 
 # Create .swiftrc
 sudo tee /root/.swiftrc >/dev/null <<EOF
 export OS_USERNAME=swift
 export OS_PASSWORD=swift
 export OS_TENANT_NAME=service
-export OS_AUTH_URL=http://${ENDPOINT}:5000/v2.0/
+export OS_AUTH_URL=https://${ENDPOINT}:5000/v2.0/
 EOF
 
 # Create dispersion.conf
 sudo tee /etc/swift/dispersion.conf >/dev/null <<EOF
 [dispersion]
-auth_url = http://${ENDPOINT}:5000/v2.0/
+auth_url = https://${ENDPOINT}:5000/v2.0/
 auth_user = cookbook:admin
 auth_key = openstack
 EOF
@@ -368,5 +368,6 @@ swift_restart(){
 
 # Main
 swift_install
+sudo apt-get -y install python-keystoneclient
 swift_configure
 swift_restart
