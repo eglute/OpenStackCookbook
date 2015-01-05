@@ -29,6 +29,7 @@ export SERVICE_TOKEN=ADMIN
 export SERVICE_ENDPOINT=https://${ENDPOINT}:35357/v2.0
 export MONGO_KEY=MongoFoo
 export OS_CACERT=/vagrant/ca.pem
+export OS_KEY=/vagrant/cakey.pem
 
 sudo apt-get install -y software-properties-common ubuntu-cloud-keyring
 sudo add-apt-repository -y cloud-archive:juno
