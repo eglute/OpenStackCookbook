@@ -84,15 +84,30 @@ sudo echo "use_syslog = True" >> ${KEYSTONE_CONF}
 sudo echo "syslog_log_facility = LOG_LOCAL0" >> ${KEYSTONE_CONF}
 
 sudo apt-get -y install python-keystoneclient
-sudo keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
 
+sudo keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
 echo "
+[signing]
+certfile=/etc/keystone/ssl/certs/signing_cert.pem
+keyfile=/etc/keystone/ssl/private/signing_key.pem
+ca_certs=/etc/keystone/ssl/certs/ca.pem
+ca_key=/etc/keystone/ssl/private/cakey.pem
+key_size=2048
+valid_days=3650
+cert_subject=/C=US/ST=Unset/L=Unset/O=Unset/CN=172.16.0.200
+
 [ssl]
 enable = True
 certfile = /etc/keystone/ssl/certs/keystone.pem
 keyfile = /etc/keystone/ssl/private/keystonekey.pem
 ca_certs = /etc/keystone/ssl/certs/ca.pem
+cert_subject=/C=US/ST=Unset/L=Unset/O=Unset/CN=172.16.0.200
 ca_key = /etc/keystone/ssl/certs/cakey.pem" | sudo tee -a ${KEYSTONE_CONF}
+
+rm -rf /etc/keystone/ssl
+sudo keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+sudo cp /etc/keystone/ssl/certs/ca.pem /etc/ssl/certs/ca.pem
+sudo c_rehash /etc/ssl/certs/ca.pem
 
 # This runs for both LDAP and non-LDAP configs
 create_endpoints(){
@@ -724,6 +739,8 @@ linuxnet_interface_driver=nova.network.linux_net.LinuxOVSInterfaceDriver
 #firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
 security_group_api=neutron
 firewall_driver=nova.virt.firewall.NoopFirewallDriver
+neutron_ca_certificates_file=/etc/ssl/certs/ca.pem
+
 
 service_neutron_metadata_proxy=true
 neutron_metadata_proxy_shared_secret=foo

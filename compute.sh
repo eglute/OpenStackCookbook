@@ -26,6 +26,8 @@ SERVICE_TENANT=service
 NOVA_SERVICE_USER=nova
 NOVA_SERVICE_PASS=nova
 
+sudo scp root@controller:/etc/ssl/certs/ca.pem /etc/ssl/certs/ca.pem
+sudo c_rehash /etc/ssl/certs/ca.pem
 nova_compute_install() {
 
 	# Install some packages:
@@ -245,6 +247,7 @@ fi
 # Clobber the nova.conf file with the following
 NOVA_CONF=/etc/nova/nova.conf
 NOVA_API_PASTE=/etc/nova/api-paste.ini
+#copy cert from controller to trust it
 
 cat > ${NOVA_CONF} <<EOF
 [DEFAULT]
@@ -291,6 +294,7 @@ linuxnet_interface_driver=nova.network.linux_net.LinuxOVSInterfaceDriver
 #firewall_driver=nova.virt.libvirt.firewall.IptablesFirewallDriver
 security_group_api=neutron
 firewall_driver=nova.virt.firewall.NoopFirewallDriver
+neutron_ca_certificates_file=/etc/ssl/certs/ca.pem
 
 service_neutron_metadata_proxy=true
 neutron_metadata_proxy_shared_secret=foo

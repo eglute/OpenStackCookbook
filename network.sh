@@ -26,6 +26,8 @@ sysctl -p
 sudo apt-get update
 sudo apt-get -y upgrade
 sudo apt-get -y install linux-headers-`uname -r`
+sudo scp root@controller:/etc/ssl/certs/ca.pem /etc/ssl/certs/ca.pem
+sudo c_rehash /etc/ssl/certs/ca.pem
 sudo apt-get -y install vlan bridge-utils dnsmasq-base dnsmasq-utils
 sudo apt-get -y install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-switch neutron-l3-agent neutron-dhcp-agent ipset python-mysqldb
 

@@ -1,8 +1,8 @@
+# Aliases for insecure SSL
 alias nova='nova --insecure'
+alias keystone='keystone --insecure'
 alias neutron='neutron --insecure'
 alias glance='glance --insecure'
-alias ceilometer='ceilometer --insecure'
-alias keystone='keystone --insecure'
 alias cinder='cinder --insecure'
 export OS_TENANT_NAME=cookbook
 export OS_USERNAME=admin
