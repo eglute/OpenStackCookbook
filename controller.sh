@@ -108,6 +108,7 @@ rm -rf /etc/keystone/ssl
 sudo keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
 sudo cp /etc/keystone/ssl/certs/ca.pem /etc/ssl/certs/ca.pem
 sudo c_rehash /etc/ssl/certs/ca.pem
+sudo cp /etc/keystone/ssl/certs/ca.pem /vagrant/ca.pem
 
 # This runs for both LDAP and non-LDAP configs
 create_endpoints(){
@@ -117,6 +118,7 @@ create_endpoints(){
   export SERVICE_TOKEN=ADMIN
   export SERVICE_ENDPOINT=https://${ENDPOINT}:35357/v2.0
   export PASSWORD=openstack
+  export OS_CACERT=/vagrant/ca.pem
 
    # OpenStack Compute Nova API Endpoint
   keystone --insecure service-create --name nova --type compute --description 'OpenStack Compute Service'

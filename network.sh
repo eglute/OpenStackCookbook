@@ -12,6 +12,11 @@
 
 # Source in common env vars
 . /vagrant/common.sh
+# Keys
+# Nova-Manage Hates Me
+ssh-keyscan controller >> ~/.ssh/known_hosts
+cat /vagrant/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
+cp /vagrant/id_rsa* ~/.ssh/
 
 # The routeable IP of the node is on our eth1 interface
 MY_IP=$(ifconfig eth1 | awk '/inet addr/ {split ($2,A,":"); print A[2]}')

@@ -13,6 +13,12 @@
 # Install some deps
 sudo apt-get install -y linux-headers-`uname -r` build-essential python-mysqldb xfsprogs
 
+# Keys
+# Nova-Manage Hates Me
+ssh-keyscan controller >> ~/.ssh/known_hosts
+cat /vagrant/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
+cp /vagrant/id_rsa* ~/.ssh/
+
 sudo scp root@controller:/etc/ssl/certs/ca.pem /etc/ssl/certs/ca.pem
 sudo c_rehash /etc/ssl/certs/ca.pem
 # Install Cinder Things

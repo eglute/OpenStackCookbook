@@ -26,6 +26,12 @@ SERVICE_TENANT=service
 NOVA_SERVICE_USER=nova
 NOVA_SERVICE_PASS=nova
 
+# Keys
+# Nova-Manage Hates Me
+ssh-keyscan controller >> ~/.ssh/known_hosts
+cat /vagrant/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
+cp /vagrant/id_rsa* ~/.ssh/
+
 sudo scp root@controller:/etc/ssl/certs/ca.pem /etc/ssl/certs/ca.pem
 sudo c_rehash /etc/ssl/certs/ca.pem
 nova_compute_install() {
@@ -369,13 +375,6 @@ nova_compute_install
 nova_configure
 nova_ceilometer
 nova_restart
-
-# Keys
-# Nova-Manage Hates Me
-ssh-keyscan controller >> ~/.ssh/known_hosts
-cat /vagrant/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
-
-cp /vagrant/id_rsa* ~/.ssh/
 
 sleep 90; echo "[+] Restarting nova-* on controller"
 ssh root@controller "cd /etc/init; ls nova-* neutron-server.conf | cut -d '.' -f1 | while read N; do stop \$N; start \$N; done"
