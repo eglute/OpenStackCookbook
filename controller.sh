@@ -87,14 +87,14 @@ sudo apt-get -y install python-keystoneclient
 
 sudo keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
 echo "
-[signing]
-certfile=/etc/keystone/ssl/certs/signing_cert.pem
-keyfile=/etc/keystone/ssl/private/signing_key.pem
-ca_certs=/etc/keystone/ssl/certs/ca.pem
-ca_key=/etc/keystone/ssl/private/cakey.pem
-key_size=2048
-valid_days=3650
-cert_subject=/C=US/ST=Unset/L=Unset/O=Unset/CN=172.16.0.200
+#[signing]
+#certfile=/etc/keystone/ssl/certs/signing_cert.pem
+#keyfile=/etc/keystone/ssl/private/signing_key.pem
+#ca_certs=/etc/keystone/ssl/certs/ca.pem
+#ca_key=/etc/keystone/ssl/private/cakey.pem
+#key_size=2048
+#valid_days=3650
+#cert_subject=/C=US/ST=Unset/L=Unset/O=Unset/CN=172.16.0.200
 
 [ssl]
 enable = True
